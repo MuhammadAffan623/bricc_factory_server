@@ -8,22 +8,22 @@ const userSchema = mongoose.Schema(
       required: true,
       unique: true,
     },
-    isKyc:{
-        type: Boolean,
-        default: false,
+    isKyc: {
+      type: Boolean,
+      default: false,
     },
-    kycDate:{
-        type: Date,
-        default: new Date("1995-01-01"),
-    },
-    signatureHash: {
-        type: String,
-        default: "",
+    kycDate: {
+      type: Date,
+      default: new Date("1995-01-01"),
     },
     lastBalance: {
-        type: Number,
-        default: 0,
-    }
+      type: Number,
+      default: 0,
+    },
+    rewardedBalance: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

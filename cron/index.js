@@ -1,31 +1,75 @@
 const cron = require("node-cron");
 const User = require("../models/userModel");
-const getBalance = require("./getBalance");
-const cronSchedule = "*/3 * * * * *";
-
-const cronJob = async () => {
-  try {
-    console.log("cron is running",getBalance());
-  } catch (error) {
-    console.log("errro in cron job ");
-  }
-};
-
-// Create the cron job
-const job = cron.schedule(cronSchedule, cronJob);
-function checkDate() {
+const getBalance = require("../utils/cryptoHelper");
+// const cronSchedule = "*/3 * * * * *";
+// let count = 0;
+// once every midnight 00:00
+const cronSchedule = "0 0 * * *";
+function isDateAfter7July() {
   const targetDate = new Date("2024-07-13");
-  const currentDate = new Date("2024-07-13");
+  const currentDate = new Date();
 
   // Remove the time part for an accurate comparison
   currentDate.setHours(0, 0, 0, 0);
   targetDate.setHours(0, 0, 0, 0);
 
   if (currentDate < targetDate) {
-    return "The current date is before July 13, 2024.";
-  } else if (currentDate > targetDate) {
-    return "The current date is after July 13, 2024.";
-  } else {
-    return "The current date is July 13, 2024.";
+    return false;
   }
+  return true;
 }
+const cronJob = async () => {
+  // if (count > 0) return;
+  // count++;
+  try {
+    console.log("cron is running");
+    const allUSer = await User.find();
+    for (const user of allUSer) {
+      console.log("for user ", user);
+      const { success, tokenbalance } = await getBalance(user.walletAddress);
+      if (!success) {
+        console.log("returning because fetching balance breaks");
+        continue;
+      }
+      console.log("tokenbalance ", typeof tokenbalance);
+      console.log("tokenbalance ", tokenbalance);
+      if (tokenbalance) {
+        console.log("giving reward on balance");
+        const _ = isDateAfter7July();
+        console.log("isDateAfter7July", _);
+
+        let percentage = !_ ? 1.1 : 1;
+        let result = (percentage / 100) * tokenbalance;
+        console.log("type of ", typeof result);
+        const body = {
+          rewardedBalance: user.rewardedBalance + result,
+          lastBalance: +tokenbalance,
+        };
+
+        const updatedUser = await User.findByIdAndUpdate(
+          user._id,
+          { $set: body },
+          { new: true }
+        );
+        console.log("updatedUser :", updatedUser);
+      } else {
+        console.log("on unstake changing reward price back to 0");
+        const body = {
+          rewardedBalance: 0,
+          lastBalance: 0,
+        };
+
+        const updatedUser = await User.findByIdAndUpdate(
+          user._id,
+          { $set: body },
+          { new: true }
+        );
+        console.log("updatedUser :", updatedUser);
+      }
+    }
+  } catch (error) {
+    console.log("errro in cron job ", error);
+  }
+};
+
+const job = cron.schedule(cronSchedule, cronJob);
