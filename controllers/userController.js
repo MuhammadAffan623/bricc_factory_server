@@ -1,13 +1,18 @@
 const User = require("../models/userModel");
 const generateToken = require("../utils/tokenHelper");
-
+const { recoverMessageAddress } = require('viem');
 const registerUser = async (req, res) => {
   console.log("registerUser function");
-  const walletAddress = req.body.walletAddress;
-  if (!walletAddress) {
+  const message = req.body.message;
+  const signature = req.body.signature;
+  if (!message || !signature) {
     res.status(400);
-    return res.json({ message: "Wallet Address is required" });
+    return res.json({ message: "Message and signature is required" });
   }
+  const walletAddress = await recoverMessageAddress({
+    message,
+    signature,
+  });
   const existingUser = await User.findOne({ walletAddress: walletAddress });
   console.log("existingUser",existingUser);
   if (existingUser) {
