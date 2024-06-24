@@ -4,7 +4,7 @@ const app = express();
 const { PORT } = require("./config");
 require("./db");
 const userRoutes = require("./routes/userRoutes");
-
+require("./cron/index");
 app.use(cors());
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true }));
