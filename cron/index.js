@@ -33,7 +33,7 @@ const cronJob = async () => {
       }
       console.log("tokenbalance ", typeof tokenbalance);
       console.log("tokenbalance ", tokenbalance);
-      if (tokenbalance) {
+      if (tokenbalance !== "0.0") {
         console.log("giving reward on balance");
         const _ = isDateAfter7July();
         console.log("isDateAfter7July", _);
