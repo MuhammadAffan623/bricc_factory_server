@@ -1,6 +1,6 @@
 const User = require("../models/userModel");
 const generateToken = require("../utils/tokenHelper");
-const { recoverMessageAddress } = require('viem');
+const { recoverMessageAddress } = require("viem");
 const registerUser = async (req, res) => {
   console.log("registerUser function");
   const message = req.body.message;
@@ -14,18 +14,23 @@ const registerUser = async (req, res) => {
     signature,
   });
   const existingUser = await User.findOne({ walletAddress: walletAddress });
-  console.log("existingUser",existingUser);
+  console.log("existingUser", existingUser);
   if (existingUser) {
     return res
       .status(200)
       .json({ user: existingUser, token: generateToken(existingUser._id) });
   }
   const newUser = new User({ walletAddress: walletAddress });
-  console.log('newUser >> ',newUser)
+  console.log("newUser >> ", newUser);
   await newUser.save();
   return res
     .status(200)
     .json({ user: newUser, token: generateToken(newUser._id) });
 };
-
-module.exports = { registerUser };
+const getUserFromToken = async (req, res) => {
+  if (req?.user?._id) {
+    return res.json({ user: req.user });
+  }
+  return res.status(400).json({ message: "Invalid token" });
+};
+module.exports = { registerUser, getUserFromToken };
