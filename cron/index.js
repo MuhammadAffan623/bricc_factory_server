@@ -6,7 +6,7 @@ const getBalance = require("../utils/cryptoHelper");
 // once every midnight 00:00
 const cronSchedule = "0 0 * * *";
 function isDateAfter7July() {
-  const targetDate = new Date("2024-07-13");
+  const targetDate = new Date("2024-07-15");
   const currentDate = new Date();
 
   // Remove the time part for an accurate comparison
