@@ -47,9 +47,6 @@ const cronJob = async () => {
         const ball = +tokenbalance - +user.lastBalance;
         if (ball > 0) {
           body["rewardedBalance"] = ball + (user.rewardedBalance + result);
-        } else if (ball < 0) {
-          // when user unstakes
-          body["rewardedBalance"] = 0;
         }
 
         const updatedUser = await User.findByIdAndUpdate(
