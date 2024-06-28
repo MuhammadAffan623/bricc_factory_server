@@ -2,7 +2,9 @@ const cron = require("node-cron");
 const User = require("../models/userModel");
 const getBalance = require("../utils/cryptoHelper");
 const moment = require('moment-timezone');
-const { runKYCCron} = require('./KYCcron')
+const { runKYCCron } = require('./KYCcron')
+const { runGalaxeCron } = require('./galaxe');
+const logError = require("../utils/logger");
 // const cronSchedule = "*/3 * * * * *";
 // let count = 0;
 // once every midnight 00:00
@@ -75,7 +77,9 @@ const cronJob = async () => {
       //  add another crons
     }
     runKYCCron()
+    runGalaxeCron()
   } catch (error) {
+    logError(error)
     console.log("errro in cron job ", error);
   }
 };
