@@ -1,26 +1,27 @@
 const cron = require("node-cron");
 const User = require("../models/userModel");
 const getBalance = require("../utils/cryptoHelper");
+const moment = require('moment-timezone');
 // const cronSchedule = "*/3 * * * * *";
 // let count = 0;
 // once every midnight 00:00
-const cronSchedule = "0 0 * * *";
-function isDateAfter7July() {
-  const targetDate = new Date("2024-07-15");
-  const currentDate = new Date();
 
-  // Remove the time part for an accurate comparison
-  currentDate.setHours(0, 0, 0, 0);
-  targetDate.setHours(0, 0, 0, 0);
+const localMidnightCET = moment.tz('00:00', 'HH:mm', 'CET').local().format('HH:mm');
+const [localHour, localMinute] = localMidnightCET.split(':').map(Number);
 
-  if (currentDate < targetDate) {
-    return false;
-  }
-  return true;
+// local time equivalent to 00:00 CET
+const cronSchedule =`${localMinute} ${localHour} * * *`;
+
+function isTodayGreaterThanSpecifiedDate() {
+  // Define the specified date (2024-07-15) in CET
+  const specifiedDateCET = moment.tz("2024-07-14", "YYYY-MM-DD", "CET");
+  // Get the current date and time in CET
+  const currentDateCET = moment.tz('CET');
+  // Compare the dates
+  return currentDateCET.isAfter(specifiedDateCET);
 }
+
 const cronJob = async () => {
-  // if (count > 0) return;
-  // count++;
   try {
     console.log("cron is running");
     const allUSer = await User.find();
@@ -31,22 +32,20 @@ const cronJob = async () => {
         console.log("returning because fetching balance breaks");
         continue;
       }
-      console.log("tokenbalance ", typeof tokenbalance);
-      console.log("tokenbalance ", tokenbalance);
-      if (tokenbalance !== "0.0") {
-        console.log("giving reward on balance");
-        const _ = isDateAfter7July();
-        console.log("isDateAfter7July", _);
 
+      if (tokenbalance !== "0.0") {
+        const _ = isTodayGreaterThanSpecifiedDate();
         let percentage = !_ ? 1.1 : 1;
         let result = (percentage / 100) * tokenbalance;
-        console.log("type of ", typeof result);
         const body = {
           lastBalance: +tokenbalance,
         };
-        const ball = +tokenbalance - +user.lastBalance;
-        if (ball > 0) {
-          body["rewardedBalance"] = ball + (user.rewardedBalance + result);
+        // when we get balance and there is no reward 
+        // then we add balance to show accumulated reward balance
+        if (!user?.rewardedBalance) {
+          body["rewardedBalance"] = +tokenbalance + (result);
+        }else{
+          body["rewardedBalance"] = +user?.rewardedBalance + result
         }
 
         const updatedUser = await User.findByIdAndUpdate(
@@ -69,6 +68,7 @@ const cronJob = async () => {
         );
         console.log("updatedUser :", updatedUser);
       }
+      //  add another crons
     }
   } catch (error) {
     console.log("errro in cron job ", error);
