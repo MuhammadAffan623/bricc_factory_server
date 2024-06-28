@@ -11,7 +11,7 @@ const localMidnightCET = moment.tz('00:00', 'HH:mm', 'CET').local().format('HH:m
 const [localHour, localMinute] = localMidnightCET.split(':').map(Number);
 
 // local time equivalent to 00:00 CET
-const cronSchedule =`${localMinute} ${localHour} * * *`;
+// const cronSchedule =`${localMinute} ${localHour} * * *`;
 
 function isTodayGreaterThanSpecifiedDate() {
   // Define the specified date (2024-07-15) in CET
@@ -24,6 +24,11 @@ function isTodayGreaterThanSpecifiedDate() {
 
 const cronJob = async () => {
   try {
+    // paused cron  
+    return
+
+    // if(count>0) return
+    // count ++
     console.log("cron is running");
     const allUSer = await User.find();
     for (const user of allUSer) {
@@ -77,4 +82,4 @@ const cronJob = async () => {
   }
 };
 
-const job = cron.schedule(cronSchedule, cronJob);
+// const job = cron.schedule(cronSchedule, cronJob);
