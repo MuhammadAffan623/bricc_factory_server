@@ -12,6 +12,10 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isKycPaid: {
+      type: Boolean,
+      default: false,
+    },
     kycDate: {
       type: Date,
       default: new Date("1995-01-01"),

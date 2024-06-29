@@ -41,32 +41,12 @@ const cronJob = async () => {
 
       if (tokenbalance !== "0.0") {
         const _ = isTodayGreaterThanSpecifiedDate();
-        let percentage = !_ ? 1.1 : 1;
+        let percentage = !_ ? 10 : 1;
         let result = (percentage / 100) * tokenbalance;
         const body = {
           lastBalance: +tokenbalance,
+          rewardedBalance : +user?.rewardedBalance + +tokenbalance + result
         };
-        // when we get balance and there is no reward 
-        // then we add balance to show accumulated reward balance
-        if (!user?.rewardedBalance) {
-          body["rewardedBalance"] = +tokenbalance + (result);
-        }else{
-          body["rewardedBalance"] = +user?.rewardedBalance + result
-        }
-
-        const updatedUser = await User.findByIdAndUpdate(
-          user._id,
-          { $set: body },
-          { new: true }
-        );
-        console.log("updatedUser :", updatedUser);
-      } else {
-        console.log("on unstake changing reward price back to 0");
-        const body = {
-          rewardedBalance: 0,
-          lastBalance: 0,
-        };
-
         const updatedUser = await User.findByIdAndUpdate(
           user._id,
           { $set: body },

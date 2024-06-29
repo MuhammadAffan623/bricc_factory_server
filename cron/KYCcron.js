@@ -25,7 +25,6 @@ const runKYCCron = () => {
             const body = {
               isKyc: true,
               kycDate : new Date(),
-              rewardedBalance : user.rewardedBalance + 1000
             };
             const updatedUser = await User.findByIdAndUpdate(
               user._id,
