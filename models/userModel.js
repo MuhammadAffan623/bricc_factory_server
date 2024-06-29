@@ -31,6 +31,10 @@ const userSchema = mongoose.Schema(
     weeklyReward: {
       type: Number,
       default: 0,
+    },
+    ambassadorPoint:{
+      type: Number,
+      default: 0,
     }
   },
   {
