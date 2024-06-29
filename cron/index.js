@@ -45,8 +45,12 @@ const cronJob = async () => {
         let result = (percentage / 100) * tokenbalance;
         const body = {
           lastBalance: +tokenbalance,
-          rewardedBalance : +user?.rewardedBalance + +tokenbalance + result
         };
+        if(result === 1){
+          body['rewardedBalance'] = +user?.rewardedBalance + +tokenbalance
+        }else{
+          body['rewardedBalance'] = +user?.rewardedBalance + +tokenbalance + result
+        }
         const updatedUser = await User.findByIdAndUpdate(
           user._id,
           { $set: body },
