@@ -8,6 +8,7 @@ const logError = require("../utils/logger");
 const { runAmbassadorCron } = require("./ambassador");
 const { runPartnerProjectCron } = require("./partner_project");
 const { runLogsCron } = require("./daily_logs");
+const { runRefferedCron } = require("./referred");
 // const cronSchedule = "*/3 * * * * *";
 // let count = 0;
 // once every midnight 00:00
@@ -19,7 +20,7 @@ const localMidnightCET = moment
 const [localHour, localMinute] = localMidnightCET.split(":").map(Number);
 
 // local time equivalent to 00:00 CET
-const cronSchedule =`${localMinute} ${localHour} * * *`;
+const cronSchedule = `${localMinute} ${localHour} * * *`;
 
 function isTodayGreaterThanSpecifiedDate() {
   // Define the specified date (2024-07-15) in CET
@@ -51,10 +52,11 @@ const cronJob = async () => {
         const body = {
           lastBalance: +tokenbalance,
         };
-        if(result === 1){
-          body['rewardedBalance'] = +user?.rewardedBalance + +tokenbalance
-        }else{
-          body['rewardedBalance'] = +user?.rewardedBalance + +tokenbalance + result
+        if (result === 1) {
+          body["rewardedBalance"] = +user?.rewardedBalance + +tokenbalance;
+        } else {
+          body["rewardedBalance"] =
+            +user?.rewardedBalance + +tokenbalance + result;
         }
         const updatedUser = await User.findByIdAndUpdate(
           user._id,
@@ -65,11 +67,12 @@ const cronJob = async () => {
       }
       //  add another crons
     }
-    runKYCCron()
-    runGalaxeCron()
-    runAmbassadorCron()
-    runPartnerProjectCron()
+    runKYCCron();
+    runGalaxeCron();
+    runAmbassadorCron();
+    runPartnerProjectCron();
     runLogsCron();
+    runRefferedCron();
   } catch (error) {
     logError(error);
     console.log("errro in cron job ", error);

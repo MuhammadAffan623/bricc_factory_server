@@ -20,6 +20,10 @@ const userSchema = mongoose.Schema(
       type: Date,
       default: new Date("1995-01-01"),
     },
+    referredPoints: {
+      type: Number,
+      default: 0,
+    },
     lastBalance: {
       type: Number,
       default: 0,
