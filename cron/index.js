@@ -6,7 +6,7 @@ const { runKYCCron } = require('./KYCcron')
 const { runGalaxeCron } = require('./galaxe');
 const logError = require("../utils/logger");
 const { runAmbassadorCron } = require('./ambassador')
-
+const {runPartnerProjectCron} = require("./partner_project")
 // const cronSchedule = "*/3 * * * * *";
 // let count = 0;
 // once every midnight 00:00
@@ -65,6 +65,7 @@ const cronJob = async () => {
     runKYCCron()
     runGalaxeCron()
     runAmbassadorCron()
+    runPartnerProjectCron()
   } catch (error) {
     logError(error)
     console.log("errro in cron job ", error);

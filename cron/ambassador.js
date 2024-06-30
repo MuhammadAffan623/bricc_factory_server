@@ -15,24 +15,13 @@ const runAmbassadorCron = () => {
     .on("data", async (row) => {
       try {
         console.log({ row });
-        if (
-          row?.["Wallet"] &&
-          row?.["Name of partner project"] &&
-          row?.["Description of the task"] &&
-          row?.["Tooltip text"] &&
-          row?.["Amount of points to reward"] &&
-          row?.["Date of snapshot"]
-        ) {
+        if (row?.["Wallet"] && row?.["Amount of points to reward"]) {
           const user = await User.findOne({ walletAddress: row?.["Wallet"] });
           console.log({ user });
           // user not exist in DB
           if (!user) return;
           const body = {
             isAmbassador: true,
-            patnerProjectName: row?.["Name of partner project"],
-            ambassadorDescription: row?.["Description of the task"],
-            ambassadorTooltip: row?.["Tooltip text"],
-            ambassadorSnapshotDate: new Date(row["Date of snapshot"]),
             ambassadorPoint: +row?.["Amount of points to reward"],
           };
           const updatedUser = await User.findByIdAndUpdate(

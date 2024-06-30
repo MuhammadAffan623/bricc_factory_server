@@ -40,20 +40,6 @@ const userSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
-    patnerProjectName: {
-      type: String,
-    },
-    ambassadorSnapshotDate: {
-      type: Date,
-      default: new Date("1995-01-01"),
-    },
-    ambassadorDescription:{
-      type: String,
-    },
-    ambassadorTooltip:{
-      type: String,
-    },
-
   },
   {
     timestamps: true,
