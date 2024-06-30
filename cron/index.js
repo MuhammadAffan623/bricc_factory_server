@@ -9,6 +9,13 @@ const { runAmbassadorCron } = require("./ambassador");
 const { runPartnerProjectCron } = require("./partner_project");
 const { runLogsCron } = require("./daily_logs");
 const { runRefferedCron } = require("./referred");
+const Logs = require("../models/logsModel");
+const {
+  DAILYREWARD,
+  DAILYREWARDESCRIPTION,
+  DAILYREWARDESCRIPTION2,
+} = require("../const/logs");
+
 // const cronSchedule = "*/3 * * * * *";
 // let count = 0;
 // once every midnight 00:00
@@ -53,8 +60,25 @@ const cronJob = async () => {
           lastBalance: +tokenbalance,
         };
         if (result === 1) {
+          console.log("giving 1 percent");
+          const newLogs = new Logs({
+            walletAddress: user.walletAddress,
+            taskName: DAILYREWARD,
+            decription: `${DAILYREWARDESCRIPTION2} on balance ${tokenbalance} `,
+            accuredPoints: +user?.rewardedBalance + +tokenbalance,
+          });
+          await newLogs.save();
+
           body["rewardedBalance"] = +user?.rewardedBalance + +tokenbalance;
         } else {
+          console.log("giving 10 percent");
+          const newLogs = new Logs({
+            walletAddress: user.walletAddress,
+            taskName: DAILYREWARD,
+            decription: `${DAILYREWARDESCRIPTION} on balance ${tokenbalance} `,
+            accuredPoints: +user?.rewardedBalance + +tokenbalance + result,
+          });
+          await newLogs.save();
           body["rewardedBalance"] =
             +user?.rewardedBalance + +tokenbalance + result;
         }

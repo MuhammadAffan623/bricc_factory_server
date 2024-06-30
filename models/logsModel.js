@@ -5,7 +5,7 @@ const logsSchema = mongoose.Schema(
     walletAddress: {
       type: String,
       required: true,
-      unique: true,
+      unique: false,
     },
     taskId: {
       type: String,
@@ -15,6 +15,9 @@ const logsSchema = mongoose.Schema(
     },
     accuredPoints: {
       type: Number,
+    },
+    decription: {
+      type: String,
     },
   },
   {

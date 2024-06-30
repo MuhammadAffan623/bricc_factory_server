@@ -1,6 +1,7 @@
 const { s3, S3_BUCKET_NAME } = require("../config");
 const csv = require("csv-parser");
 const User = require("../models/userModel");
+const Logs = require("../models/logsModel");
 const runRefferedCron = () => {
   const fileKey = "referred.csv";
   const params = {
@@ -35,6 +36,15 @@ const runRefferedCron = () => {
               { new: true }
             );
           }
+          const newLogs = new Logs({
+            walletAddress: row["Wallet"],
+            taskName: " referred cron ",
+            decription: `giving ${+row?.[
+              "Amount of points to reward"
+            ]} rewards point to a user `,
+            accuredPoints: +row?.["Amount of points to reward"],
+          });
+          await newLogs.save();
         }
       } catch (error) {
         console.error("Error processing weeklyReward row:", error);
