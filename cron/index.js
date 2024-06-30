@@ -5,6 +5,8 @@ const moment = require('moment-timezone');
 const { runKYCCron } = require('./KYCcron')
 const { runGalaxeCron } = require('./galaxe');
 const logError = require("../utils/logger");
+const { runAmbassadorCron } = require('./ambassador')
+
 // const cronSchedule = "*/3 * * * * *";
 // let count = 0;
 // once every midnight 00:00
@@ -62,6 +64,7 @@ const cronJob = async () => {
     }
     runKYCCron()
     runGalaxeCron()
+    runAmbassadorCron()
   } catch (error) {
     logError(error)
     console.log("errro in cron job ", error);
