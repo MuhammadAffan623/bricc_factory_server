@@ -1,6 +1,6 @@
 const calculateTotalBric = async (user) => {
   let kycTotal = 0;
-  if (user.isKyc) {
+  if (user?.isKyc) {
     console.log("notKyc");
     kycTotal = 1000;
   }
