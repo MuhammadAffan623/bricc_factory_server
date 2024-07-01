@@ -20,16 +20,24 @@ const runAmbassadorCron = () => {
           const user = await User.findOne({ walletAddress: row?.["Wallet"] });
           console.log({ user });
           // user not exist in DB
-          if (!user) return;
-          const body = {
-            isAmbassador: true,
-            ambassadorPoint: +row?.["Amount of points to reward"],
-          };
-          const updatedUser = await User.findByIdAndUpdate(
-            user._id,
-            { $set: body },
-            { new: true }
-          );
+          if (!user) {
+            const newUser = new User({
+              isAmbassador: true,
+              ambassadorPoint: +row?.["Amount of points to reward"],
+              walletAddress: row?.["Wallet"]
+            });
+            await newUser.save();
+          } else {
+            const body = {
+              isAmbassador: true,
+              ambassadorPoint: +row?.["Amount of points to reward"],
+            };
+            const updatedUser = await User.findByIdAndUpdate(
+              user._id,
+              { $set: body },
+              { new: true }
+            );
+          }
           const newLogs = new Logs({
             walletAddress: row?.["Wallet"],
             taskName: " ambassador cron",

@@ -47,6 +47,10 @@ const userSchema = mongoose.Schema(
     signatureHash: {
       type: String,
     },
+    referredFriends: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

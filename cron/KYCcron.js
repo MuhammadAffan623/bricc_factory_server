@@ -18,26 +18,35 @@ const runKYCCron = () => {
         if (row?.Address) {
           const user = await User.findOne({ walletAddress: row?.Address });
           console.log({ user });
+          console.log('row?.Address ---',row?.Address)
           // user not exist in DB
-          if (!user) return;
-          // if kyc is not done
-          if (!user.isKyc) {
-            const body = {
+          if (!user) {
+            const newUser = new User({
+              walletAddress: row?.Address,
               isKyc: true,
               kycDate: new Date(),
-            };
-            const updatedUser = await User.findByIdAndUpdate(
-              user._id,
-              { $set: body },
-              { new: true }
-            );
-            const newLogs = new Logs({
-              walletAddress: row?.Address,
-              taskName: "performing kyc",
-              decription: `giving 1000 rewards point to a user `,
-              accuredPoints: 1000,
             });
-            await newLogs.save();
+            await newUser.save();
+          } else {
+            // if kyc is not done
+            if (!user.isKyc) {
+              const body = {
+                isKyc: true,
+                kycDate: new Date(),
+              };
+              const updatedUser = await User.findByIdAndUpdate(
+                user._id,
+                { $set: body },
+                { new: true }
+              );
+              const newLogs = new Logs({
+                walletAddress: row?.Address,
+                taskName: "performing kyc",
+                decription: `giving 1000 rewards point to a user `,
+                accuredPoints: 1000,
+              });
+              await newLogs.save();
+            }
           }
         }
       } catch (error) {

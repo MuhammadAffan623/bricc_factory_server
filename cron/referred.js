@@ -24,11 +24,13 @@ const runRefferedCron = () => {
             const newUser = new User({
               walletAddress: row?.["Wallet"],
               referredPoints: +row?.["Amount of points to reward"],
+              referredFriends : +row?.["Referred friends"]
             });
             await newUser.save();
           } else {
             const body = {
               referredPoints: +row?.["Amount of points to reward"],
+              referredFriends : +row?.["Referred friends"]
             };
             const updatedUser = await User.findByIdAndUpdate(
               user._id,

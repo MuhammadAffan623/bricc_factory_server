@@ -15,21 +15,28 @@ const runGalaxeCron = () => {
     .pipe(csv())
     .on("data", async (row) => {
       try {
-        console.log('galxe')
+        console.log("galxe");
         if (row?.Address && row?.BricAmount) {
-          console.log('in ga;axe cron---')
+          console.log("in ga;axe cron---");
           const user = await User.findOne({ walletAddress: row?.Address });
           console.log({ user, row });
           // user not exist in DB
-          if (!user) return;
-          const body = {
-            weeklyReward: +row?.BricAmount,
-          };
-          const updatedUser = await User.findByIdAndUpdate(
-            user._id,
-            { $set: body },
-            { new: true }
-          );
+          if (!user) {
+            const newUser = new User({
+              weeklyReward: +row?.BricAmount,
+              walletAddress: row?.Address,
+            });
+            await newUser.save();
+          } else {
+            const body = {
+              weeklyReward: +row?.BricAmount,
+            };
+            const updatedUser = await User.findByIdAndUpdate(
+              user._id,
+              { $set: body },
+              { new: true }
+            );
+          }
           const newLogs = new Logs({
             walletAddress: row?.Address,
             taskName: " Galaxe cron ",
