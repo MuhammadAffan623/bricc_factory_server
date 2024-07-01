@@ -15,7 +15,9 @@ const runGalaxeCron = () => {
     .pipe(csv())
     .on("data", async (row) => {
       try {
+        console.log('galxe')
         if (row?.Address && row?.BricAmount) {
+          console.log('in ga;axe cron---')
           const user = await User.findOne({ walletAddress: row?.Address });
           console.log({ user, row });
           // user not exist in DB

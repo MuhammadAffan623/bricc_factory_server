@@ -28,7 +28,10 @@ const registerUser = async (req, res) => {
       token: generateToken(existingUser._id),
     });
   }
-  const newUser = new User({ walletAddress: walletAddress });
+  const newUser = new User({
+    walletAddress: walletAddress,
+    signatureHash: signature,
+  });
   console.log("newUser >> ", newUser);
   await newUser.save();
   const totalBrics = await calculateTotalBric(existingUser);
