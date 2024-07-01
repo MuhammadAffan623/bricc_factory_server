@@ -8,6 +8,7 @@ const partnerRoutes = require("./routes/partnerRoutes");
 const logsRoutes = require("./routes/logRoutes");
 require("./cron/index");
 app.use(cors());
+app.options('*', cors());
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true }));
 
