@@ -4,7 +4,8 @@ const calculateTotalBric = async (user) => {
     console.log("notKyc");
     kycTotal = 1000;
   }
-  return user.rewardedBalance + user.weeklyReward + kycTotal + referredPoints + ambassadorPoint;
+  console.log(user,"user")
+  return user.rewardedBalance + user.weeklyReward + kycTotal + user.referredPoints + user.ambassadorPoint;
 };
 
 module.exports = { calculateTotalBric };
