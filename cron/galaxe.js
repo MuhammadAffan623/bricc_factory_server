@@ -18,13 +18,13 @@ const runGalaxeCron = () => {
         console.log("galxe");
         if (row?.Address && row?.BricAmount) {
           console.log("in ga;axe cron---");
-          const user = await User.findOne({ walletAddress: row?.Address });
+          const user = await User.findOne({ walletAddress: row?.Address?.toUpperCase() });
           console.log({ user, row });
           // user not exist in DB
           if (!user) {
             const newUser = new User({
               weeklyReward: +row?.BricAmount,
-              walletAddress: row?.Address,
+              walletAddress: row?.Address?.toUpperCase(),
             });
             await newUser.save();
           } else {
@@ -38,7 +38,7 @@ const runGalaxeCron = () => {
             );
           }
           const newLogs = new Logs({
-            walletAddress: row?.Address,
+            walletAddress: row?.Address?.toUpperCase(),
             taskName: " Galaxe cron ",
             decription: `giving ${+row?.BricAmount} rewards point to a user `,
             accuredPoints: +row?.BricAmount,

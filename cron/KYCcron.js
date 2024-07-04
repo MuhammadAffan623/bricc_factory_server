@@ -16,13 +16,13 @@ const runKYCCron = () => {
     .on("data", async (row) => {
       try {
         if (row?.Address) {
-          const user = await User.findOne({ walletAddress: row?.Address });
+          const user = await User.findOne({ walletAddress: row?.Address?.toUpperCase() });
           console.log({ user });
           console.log('row?.Address ---',row?.Address)
           // user not exist in DB
           if (!user) {
             const newUser = new User({
-              walletAddress: row?.Address,
+              walletAddress: row?.Address?.toUpperCase(),
               isKyc: true,
               kycDate: new Date(),
             });
@@ -40,7 +40,7 @@ const runKYCCron = () => {
                 { new: true }
               );
               const newLogs = new Logs({
-                walletAddress: row?.Address,
+                walletAddress: row?.Address?.toUpperCase(),
                 taskName: "performing kyc",
                 decription: `giving 1000 rewards point to a user `,
                 accuredPoints: 1000,

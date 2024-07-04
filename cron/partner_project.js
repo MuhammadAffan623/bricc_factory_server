@@ -24,13 +24,13 @@ const runPartnerProjectCron = () => {
           row?.["Date of snapshot"]
         ) {
           const existingPartner = await Partner.findOne({
-            walletAddress: row?.["Wallet"],
+            walletAddress: row?.["Wallet"]?.toUpperCase(),
           });
           console.log({ existingPartner });
           // existingPartner not exist in DB
           if (!existingPartner) {
             const newpartner = new Partner({
-              walletAddress: row?.["Wallet"],
+              walletAddress: row?.["Wallet"]?.toUpperCase(),
               projectName: row?.["Name of partner project"],
               description: row?.["Description of the task"],
               tooltip: row?.["Tooltip text"],

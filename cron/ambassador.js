@@ -17,14 +17,14 @@ const runAmbassadorCron = () => {
       try {
         console.log({ row });
         if (row?.["Wallet"] && row?.["Amount of points to reward"]) {
-          const user = await User.findOne({ walletAddress: row?.["Wallet"] });
+          const user = await User.findOne({ walletAddress: row?.["Wallet"].toUpperCase() });
           console.log({ user });
           // user not exist in DB
           if (!user) {
             const newUser = new User({
               isAmbassador: true,
               ambassadorPoint: +row?.["Amount of points to reward"],
-              walletAddress: row?.["Wallet"]
+              walletAddress: row?.["Wallet"].toUpperCase()
             });
             await newUser.save();
           } else {
@@ -39,7 +39,7 @@ const runAmbassadorCron = () => {
             );
           }
           const newLogs = new Logs({
-            walletAddress: row?.["Wallet"],
+            walletAddress: row?.["Wallet"].toUpperCase(),
             taskName: " ambassador cron",
             decription: `giving ${row?.["Amount of points to reward"]} rewards point to a user `,
             accuredPoints: row?.["Amount of points to reward"],
