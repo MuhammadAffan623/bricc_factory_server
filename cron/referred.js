@@ -17,12 +17,13 @@ const runRefferedCron = () => {
       try {
         console.log({ row });
         if (row?.["Wallet"] && row?.["Amount of points to reward"]) {
-          const user = await User.findOne({ walletAddress: row["Wallet"]?.toUpperCase() });
+        
+          const user = await User.findOne({ walletAddress: toCorrectChecksumAddress(row["Wallet"]) });
           console.log({ user });
           // user not exist in DB
           if (!user) {
             const newUser = new User({
-              walletAddress: row?.["Wallet"]?.toUpperCase(),
+              walletAddress: toCorrectChecksumAddress(row["Wallet"]),
               referredPoints: +row?.["Amount of points to reward"],
               referredFriends : +row?.["Referred friends"]
             });
@@ -39,7 +40,7 @@ const runRefferedCron = () => {
             );
           }
           const newLogs = new Logs({
-            walletAddress: row["Wallet"]?.toUpperCase(),
+            walletAddress: toCorrectChecksumAddress(row["Wallet"]),
             taskName: " referred cron ",
             decription: `giving ${+row?.[
               "Amount of points to reward"

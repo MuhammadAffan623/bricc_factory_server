@@ -2,6 +2,7 @@ const { s3, S3_BUCKET_NAME } = require("../config");
 const csv = require("csv-parser");
 const User = require("../models/userModel");
 const Logs = require("../models/logsModel");
+const { toCorrectChecksumAddress } = require("../utils/utilityHelpers");
 const runGalaxeCron = () => {
   const fileKey = "Galxe.csv";
   const params = {
@@ -18,13 +19,13 @@ const runGalaxeCron = () => {
         console.log("galxe");
         if (row?.Address && row?.BricAmount) {
           console.log("in ga;axe cron---");
-          const user = await User.findOne({ walletAddress: row?.Address?.toUpperCase() });
+          const user = await User.findOne({ walletAddress: toCorrectChecksumAddress(row?.Address) });
           console.log({ user, row });
           // user not exist in DB
           if (!user) {
             const newUser = new User({
               weeklyReward: +row?.BricAmount,
-              walletAddress: row?.Address?.toUpperCase(),
+              walletAddress: toCorrectChecksumAddress(row?.Address) ,
             });
             await newUser.save();
           } else {
@@ -38,7 +39,7 @@ const runGalaxeCron = () => {
             );
           }
           const newLogs = new Logs({
-            walletAddress: row?.Address?.toUpperCase(),
+            walletAddress:toCorrectChecksumAddress(row?.Address) ,
             taskName: " Galaxe cron ",
             decription: `giving ${+row?.BricAmount} rewards point to a user `,
             accuredPoints: +row?.BricAmount,

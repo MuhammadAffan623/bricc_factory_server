@@ -2,6 +2,7 @@ const { s3, S3_BUCKET_NAME } = require("../config");
 const csv = require("csv-parser");
 const User = require("../models/userModel");
 const Logs = require("../models/logsModel");
+const { toCorrectChecksumAddress } = require("../utils/utilityHelpers");
 const runAmbassadorCron = () => {
   const fileKey = "ambassador.csv";
   const params = {
@@ -17,14 +18,14 @@ const runAmbassadorCron = () => {
       try {
         console.log({ row });
         if (row?.["Wallet"] && row?.["Amount of points to reward"]) {
-          const user = await User.findOne({ walletAddress: row?.["Wallet"].toUpperCase() });
+          const user = await User.findOne({ walletAddress: toCorrectChecksumAddress(row?.["Wallet"]) });
           console.log({ user });
           // user not exist in DB
           if (!user) {
             const newUser = new User({
               isAmbassador: true,
               ambassadorPoint: +row?.["Amount of points to reward"],
-              walletAddress: row?.["Wallet"].toUpperCase()
+              walletAddress: toCorrectChecksumAddress(row?.["Wallet"]) 
             });
             await newUser.save();
           } else {
@@ -39,7 +40,7 @@ const runAmbassadorCron = () => {
             );
           }
           const newLogs = new Logs({
-            walletAddress: row?.["Wallet"].toUpperCase(),
+            walletAddress: toCorrectChecksumAddress(row?.["Wallet"]) ,
             taskName: " ambassador cron",
             decription: `giving ${row?.["Amount of points to reward"]} rewards point to a user `,
             accuredPoints: row?.["Amount of points to reward"],

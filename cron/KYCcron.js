@@ -10,19 +10,19 @@ const runKYCCron = () => {
   };
 
   const s3Stream = s3.getObject(params).createReadStream();
-
+  
   s3Stream
     .pipe(csv())
     .on("data", async (row) => {
       try {
         if (row?.Address) {
-          const user = await User.findOne({ walletAddress: row?.Address?.toUpperCase() });
+          const user = await User.findOne({ walletAddress: toCorrectChecksumAddress(row?.Address) });
           console.log({ user });
           console.log('row?.Address ---',row?.Address)
           // user not exist in DB
           if (!user) {
             const newUser = new User({
-              walletAddress: row?.Address?.toUpperCase(),
+              walletAddress: toCorrectChecksumAddress(row?.Address) ,
               isKyc: true,
               kycDate: new Date(),
             });
@@ -40,7 +40,7 @@ const runKYCCron = () => {
                 { new: true }
               );
               const newLogs = new Logs({
-                walletAddress: row?.Address?.toUpperCase(),
+                walletAddress: toCorrectChecksumAddress(row?.Address) ,
                 taskName: "performing kyc",
                 decription: `giving 1000 rewards point to a user `,
                 accuredPoints: 1000,

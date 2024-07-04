@@ -21,7 +21,7 @@ const registerUser = async (req, res) => {
     signature,
   });
 
-  const existingUser = await User.findOne({ walletAddress: walletAddress?.toUpperCase() });
+  const existingUser = await User.findOne({ walletAddress: walletAddress });
   console.log("existingUser", existingUser);
   if (existingUser) {
     const totalBrics = await calculateTotalBric(existingUser);
@@ -35,7 +35,7 @@ const registerUser = async (req, res) => {
     });
   }
   const newUser = new User({
-    walletAddress: walletAddress,
+    walletAddress: walletAddress ,
     signatureHash: signature,
   });
   console.log("newUser >> ", newUser);

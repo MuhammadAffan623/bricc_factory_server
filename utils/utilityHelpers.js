@@ -1,3 +1,4 @@
+const { ethers } = require('ethers');
 const calculateTotalBric = async (user) => {
   let kycTotal = 0;
   if (user?.isKyc) {
@@ -7,4 +8,12 @@ const calculateTotalBric = async (user) => {
   return user?.rewardedBalance + user?.weeklyReward + kycTotal + user?.referredPoints + user?.ambassadorPoint;
 };
 
-module.exports = { calculateTotalBric };
+function toCorrectChecksumAddress(address) {
+    try {
+        return ethers.utils.getAddress(address);
+    } catch (error) {
+        return "Invalid Ethereum address";
+    }
+}
+
+module.exports = { calculateTotalBric, toCorrectChecksumAddress };
